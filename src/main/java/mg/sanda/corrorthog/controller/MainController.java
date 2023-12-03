@@ -6,36 +6,31 @@ import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 
 import mg.sanda.corrorthog.services.FileHandlerService;
-import mg.sanda.corrorthog.services.LDService;
 import mg.sanda.corrorthog.services.WordHandlerService;
 import mg.sanda.corrorthog.utils.Payload;
 import mg.sanda.corrorthog.utils.PayloadRequestBody;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
+@CrossOrigin
 public class MainController {
 
     @Autowired
     FileHandlerService fHService = new FileHandlerService();
 
-    @GetMapping(value = "/")
-    public ResponseEntity<Payload> getSuggestedWords() {
-        Payload pl = new Payload(WordHandlerService.suggestionWord(fHService.listWordsFR, "jks"));
-        return ResponseEntity.ok(pl);
-    }
-
     @PostMapping(value = "/")
-    public ResponseEntity<ArrayList<Payload>> postMethodName(@RequestBody PayloadRequestBody req) {
+    public ResponseEntity<Payload> postMethodName(@RequestBody PayloadRequestBody req) {
         ArrayList<String> listAllWords = new ArrayList<>();
         ArrayList<String> listToSuggestedWords = new ArrayList<>();
-        ArrayList<Payload> listSuggestion = new ArrayList<>();
+        Payload payload = new Payload();
+
         listAllWords.addAll(
                 Arrays.asList(
                         req.getSentence().split("\s", 0)));
@@ -46,6 +41,7 @@ public class MainController {
                         listToSuggestedWords.add(word);
                     }
                 }
+                payload.setToBeSuggested(listToSuggestedWords);
                 break;
             case "en":
                 for (String word : listAllWords) {
@@ -53,20 +49,19 @@ public class MainController {
                         listToSuggestedWords.add(word);
                     }
                 }
+                payload.setToBeSuggested(listToSuggestedWords);
                 break;
             default:
                 break;
         }
         for (String word : listToSuggestedWords) {
-            Payload payload = new Payload();
+
             HashMap<String, ArrayList<String>> wordSug = new HashMap<>();
             ArrayList<String> suggestedWords = WordHandlerService.suggestionWord(fHService.listWordsFR, word);
-            payload.setListSuggestedWords(suggestedWords);
             wordSug.put(word, suggestedWords);
-            payload.setSuggestedWords(wordSug);
-            listSuggestion.add(payload);
+            payload.addSuggestedWords(wordSug);
         }
-        return ResponseEntity.ok(listSuggestion);
+        return ResponseEntity.ok(payload);
     }
 
 }

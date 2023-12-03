@@ -2,8 +2,6 @@ package mg.sanda.corrorthog.services;
 
 import java.util.ArrayList;
 
-import org.springframework.stereotype.Service;
-
 /**
  * Service pour gérer les mots dans le dictionnaire
  */
@@ -34,7 +32,7 @@ public class WordHandlerService {
                 list.add(wordToCompare);
                 i++;
             }
-            if(i>5) break;
+            if(i>3) break;
         }
         return list;
     }

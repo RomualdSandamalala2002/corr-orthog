@@ -1,5 +1,6 @@
 package mg.sanda.corrorthog.utils;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,48 +12,41 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Reponse du serveur lors de la requête
  */
 public class Payload {
-    private String response;
-    
+    @JsonProperty(value = "to-be-suggested")
+    private ArrayList<String> toBeSuggested = new ArrayList<>();
+
+    public ArrayList<String> getToBeSuggested() {
+        return toBeSuggested;
+    }
+
+
+    public void setToBeSuggested(ArrayList<String> toBeSuggested) {
+        this.toBeSuggested = toBeSuggested;
+    }
+
     @JsonProperty(value = "suggested-words")
-    private HashMap<String,ArrayList<String>> suggestedWords;
+    private ArrayList
+        <HashMap
+            <String,ArrayList
+                <String>
+            >
+        > suggestedWords = new ArrayList<>();
     
-    @JsonIgnore
-    private ArrayList<String> listSuggestedWords;
 
-    public Payload() {
-    }
-
-    public Payload(ArrayList<String> lsw){
-        if(lsw.isEmpty()) {
-            this.response = "none";
-        }
-        else {
-            this.response = "ok";
-        }
-        this.listSuggestedWords = lsw;
-    }
-
-    public HashMap<String, ArrayList<String>> getSuggestedWords() {
+    public ArrayList<HashMap<String, ArrayList<String>>> getSuggestedWords() {
         return suggestedWords;
     }
 
-    public void setSuggestedWords(HashMap<String, ArrayList<String>> suggestedWords) {
+
+    public void setSuggestedWords(ArrayList<HashMap<String, ArrayList<String>>> suggestedWords) {
         this.suggestedWords = suggestedWords;
     }
 
-    public String getResponse() {
-        return response;
+    public void addSuggestedWords(HashMap<String, ArrayList<String>> swHashMap){
+        this.suggestedWords.add(swHashMap);
     }
 
-    public void setResponse(String response) {
-        this.response = response;
+    public Payload() {
     }
-
-    public ArrayList<String> getListSuggestedWords() {
-        return listSuggestedWords;
-    }
-
-    public void setListSuggestedWords(ArrayList<String> listSuggestedWords) {
-        this.listSuggestedWords = listSuggestedWords;
-    }
+    
 }
